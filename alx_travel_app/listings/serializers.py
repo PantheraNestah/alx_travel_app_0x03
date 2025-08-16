@@ -12,3 +12,11 @@ class BookingSerializer(serializers.ModelSerializer):
         model = Booking
         # Name each field for the booking endpoint
         fields = ['id', 'listing', 'guest', 'check_in_date', 'check_out_date']
+
+# Serializer for payment initiation
+class PaymentInitSerializer(serializers.Serializer):
+    booking_id = serializers.IntegerField()
+
+# Serializer for payment verification
+class PaymentVerifySerializer(serializers.Serializer):
+    transaction_id = serializers.CharField()
