@@ -9,6 +9,7 @@ A comprehensive Django REST API for a travel booking platform that allows users 
 - **Booking System**: Complete booking management with date validation
 - **User Management**: Integration with Django's built-in user authentication system
 - **Review System**: User reviews and ratings for properties (model implemented)
+- **Payment Integration**: Secure payment workflow using Chapa API for bookings
 
 ### API Features
 - **RESTful API Design**: Clean, intuitive API endpoints following REST conventions
@@ -16,6 +17,7 @@ A comprehensive Django REST API for a travel booking platform that allows users 
 - **Interactive API Documentation**: Swagger UI and ReDoc integration for easy API exploration
 - **JSON Responses**: All endpoints return properly formatted JSON data
 - **CORS Support**: Configured for frontend integration
+- **Chapa Payment Endpoints**: Endpoints to initiate and verify payments, and track payment status
 
 ## 🛠️ Technology Stack
 
@@ -45,6 +47,10 @@ A comprehensive Django REST API for a travel booking platform that allows users 
 - `PATCH /api/bookings/{id}/` - Partially update a booking
 - `DELETE /api/bookings/{id}/` - Delete a booking
 
+### Payments
+- `POST /api/payments/initiate/` - Initiate a payment for a booking (returns Chapa checkout link)
+- `POST /api/payments/verify/` - Verify payment status with Chapa and update booking/payment status
+
 ### Documentation
 - `GET /swagger/` - Interactive Swagger API documentation
 - `GET /redoc/` - ReDoc API documentation
@@ -67,6 +73,17 @@ A comprehensive Django REST API for a travel booking platform that allows users 
 - check_out_date: DateField
 ```
 
+
+### Payment Model
+```python
+- booking: OneToOneField(Booking)
+- amount: DecimalField
+- status: CharField (pending, completed, failed, cancelled)
+- transaction_id: CharField
+- created_at: DateTimeField
+- updated_at: DateTimeField
+```
+
 ### Review Model
 ```python
 - listing: ForeignKey(Listing)
@@ -74,6 +91,15 @@ A comprehensive Django REST API for a travel booking platform that allows users 
 - rating: IntegerField
 - comment: TextField
 ```
+## 💳 Payment Workflow
+
+1. **Booking Creation**: When a user creates a booking, the API automatically initiates a payment with Chapa and returns a checkout URL.
+2. **User Payment**: The user is redirected to Chapa to complete the payment securely.
+3. **Payment Verification**: After payment, the API verifies the transaction with Chapa and updates the payment status ("completed" or "failed").
+4. **Email Confirmation**: On successful payment, a confirmation email is sent to the user (using Celery for background tasks).
+5. **Error Handling**: Any payment errors or failures are handled gracefully, and the payment status is updated accordingly.
+
+**Note:** You must set your Chapa secret key in your environment variables as `CHAPA_SECRET`.
 
 ## 🚀 Quick Start
 
@@ -251,10 +277,11 @@ Key packages used in this project:
 
 This project is part of the ALX Backend Development curriculum.
 
+
 ## 🔮 Future Enhancements
 
 - [ ] User authentication and authorization
-- [ ] Payment integration
+- [ ] Payment refund support
 - [ ] Image upload for listings
 - [ ] Search and filtering capabilities
 - [ ] Email notifications
