@@ -12,6 +12,7 @@ from .serializers import ListingSerializer, BookingSerializer, PaymentInitSerial
 from .serializers import PaymentVerifySerializer
 from rest_framework import serializers
 from rest_framework.decorators import action
+from .tasks import send_booking_confirmation_email
 
 
 
@@ -144,6 +145,9 @@ class BookingViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         booking = serializer.save()
+
+        booking_details = f"Booking ID: {booking.id}, Property: {booking.property.name}, Check-in: {booking.check_in_date}, Check-out: {booking.check_out_date}"
+        send_booking_confirmation_email.delay(booking.user.email, booking_details)
 
         # Initiate payment for the booking
         CHAPA_SECRET = getattr(settings, "CHAPA_SECRET", None)
