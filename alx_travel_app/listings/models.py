@@ -21,6 +21,7 @@ class Booking(models.Model):
 
 class Review(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    dummyfield = models.TextField(default="n/a")
     guest = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
     comment = models.TextField()
@@ -38,6 +39,7 @@ class Payment(models.Model):
         ("cancelled", "Cancelled"),
     ]
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name="payment")
+    dummyfield = models.TextField(default="n/a")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
