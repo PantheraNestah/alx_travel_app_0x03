@@ -30,6 +30,12 @@ DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "panthera254.pythonanywhere.com",
+]
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
